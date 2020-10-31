@@ -69,9 +69,9 @@ T2 we can fetch the key that we wanted to fetch
 	     HASH_SLOT = 14687
 From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
 
-![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true)
-![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-2.PNG?raw=true)
-![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-3.PNG?raw=true)
+https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true
+https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-2.PNG?raw=true
+https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-3.PNG?raw=true
 
 	   
 	   
