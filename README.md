@@ -60,18 +60,36 @@ above query displayed the below results
 	   
 what is PSYNC? it is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
 
+------------------------------------------------
 what is CLUSTER SLOTS?
-when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic and maintained by the cluster itself.
+when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic 
+and maintained by the cluster itself.
+
 T0 Seed Nodes: A, B --> client will ask the cluster for cluster slots
 T1 Slots: {A:0-5500, B: 5501-11000} --> Cluster responds with each nodes having the slots range (refer 3rd Image)
 T2 we can fetch the key that we wanted to fetch 
 	--> Lets say the HASH_SLOT = CRC16("mykey") mod 16384
-	     HASH_SLOT = 14687
+	    HASH_SLOT = 14687
+
 From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
 
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-2.PNG?raw=true
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-3.PNG?raw=true
 
-	   
-	   
+-------------------------------------------------
+
+For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
+The latency is request processing can occur when the client is not able to user the cluster slots config that was previously fetched.
+
+Problem Statement:
+
+Ideally at the beginning of the start up we've to do one cluster slots for request and then remember the result, but the cluster can reconfigure itself at anytime. 
+so we need to account for that change, if there is a moved response we've to refresh our cluser slots (in case of node failure and so on).
+https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge-solution.PNG?raw=true
+
+Solution: 
+
+we can store the cluster slot in local APC Cache on the webApplication server. This can reduce the latency 
+https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
+
