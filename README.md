@@ -60,6 +60,12 @@ above query displayed the below results
 	   
 what is PSYNC? it is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
 
-what is CLUSTER SLOTS? 
+what is CLUSTER SLOTS?
+when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic and maintained by the cluster itself.
+1. client will ask the cluster for cluster slots
+2. 
+
+![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true)
+
 	   
 	   
