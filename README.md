@@ -63,12 +63,15 @@ what is PSYNC? it is an internal command that is used when REDIS replias are sub
 what is CLUSTER SLOTS?
 when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic and maintained by the cluster itself.
 T0 Seed Nodes: A, B --> client will ask the cluster for cluster slots
-T1 Slots : {A:0-5500, B: 5501-11000} --> Cluster responds with each nodes having the slots range (2nd image)
+T1 Slots: {A:0-5500, B: 5501-11000} --> Cluster responds with each nodes having the slots range (refer 3rd Image)
 T2 we can fetch the key that we wanted to fetch 
 	--> Lets say the HASH_SLOT = CRC16("mykey") mod 16384
-	    HASH_SLOT = 14687
+	     HASH_SLOT = 14687
+From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
 
 ![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true)
+![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-2.PNG?raw=true)
+![alt text] (https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-3.PNG?raw=true)
 
 	   
 	   
