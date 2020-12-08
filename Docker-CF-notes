@@ -1,0 +1,17 @@
+Understanding these concepts paints a complete picture of why and how you should use the platform.
+
+Cloud Foundry is infrastructure-agnostic, sitting on top of your infrastructure of choice
+
+Perhaps the most unusual aspect of Cloud Foundry, from a platform engineer's perspective, is that it is infrastructure agnostic, meaning that an operator can run Cloud Foundry on a variety of IaaSes such as VMware vSphere, Amazon Web Services, Google Cloud Platform, Microsoft Azure, OpenStack, bare-metal servers, and others. 
+
+Cloud Foundry does this by using an abstraction, called a Cloud Provider Interface (CPI), that translates a common set of infrastructure build commands into an IaaS-specific translation using an open source project called Fog (http://fog.io). Fog enables Cloud Foundry to avoid vendor lock-in, which constrains you to a single IaaS. Interestingly, many IaaS providers are adding support to Fog directly, such as the Google Compute Platform. As they do, Cloud Foundry enjoys this rich inheritance that will enable it to run on an ever-growing list of cloud providers as they become available and supported.
+
+
+when we do a cf push the code along with the manifest file is pushed on to the controller called Cloud Controller.
+
+Cloud COntroller is the component which is responsible for calling all other APIs to ensure the deployment of the app in CF
+As part of Cloud Controller, it calls the component called buildpack
+
+buildpack -- responsible for converting the code to docker image. This image is a single unit which can be deployed on any VM. If the application is springboot written in java then it will add the run time which is JRE and add run command to start the application and it'll add agent (AppDynamics)
+This is about the basic flow of cf application push 
+
