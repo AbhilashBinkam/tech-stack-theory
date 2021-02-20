@@ -115,8 +115,70 @@ ApplicationConfigSecurity.java
         this.passwordEncoder = passwordEncoder;
     }
 
-------------------------------------------------------------- END OF USER CONFIGURATION -------------------------------
----------AT THIS STEP WE SHOULD BE ABLE TO LOGIN TO APP WITH THE USER NAME AND PASSWORD PROVIDED IN THE CONFIG
+AT THIS STAGE WE SHOULD BE ABLE TO LOGIN TO THE APP WITH THE USERNAME AND PASSWORD DEFINED IN THE CONFIG
+
+5. CREATE ADMIN USER AND DEFINE ROLES & PERMISSIONS USING ENUMS
+
+UserDetails adminUser = User.builder()
+                .username("admin")
+                .password("admin123")
+                .roles("ADMIN")
+                .build();
+
+we can assign multiple roles to the user (if the above config, the james user can have 2 roles at a given time.
+James can be a student and he can be an admin)
+Roles can have zero or many permissions
+
+Created ENUMs for ROLES and PERMISSIONS and aggregated PERMISSIONS to ROLES. (ApplicationUserRoles.java, ApplicationUserPermissions.java)
+
+Modified the ApplicationSecurityConfig.java
+
+    @Override
+    @Bean
+    protected UserDetailsService userDetailsService() {
+        UserDetails jamesUser = User.builder()
+                .username("james")
+                .password(passwordEncoder.encode("password"))
+                .roles(ApplicationUserRole.STUDENT.name())
+                .build();
+
+        UserDetails adminUser = User.builder()
+                .username("admin")
+                .password("admin123")
+                .roles(ApplicationUserRole.ADMIN.name())
+                .build();
+
+        return new InMemoryUserDetailsManager(jamesUser, adminUser);
+    }
+
+6 ROLE BASED AUTHENTICATION
+
+Add security to "api/v1/students" so that only students can access the endpoint.
+To do the task we need to add another ant matcher in the security config (antMatcher("/api/**").hasRole())
+
+@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/", "/index.html", "/css/*", "/js/*").permitAll()
+                .antMatchers("api/**").hasRole(ApplicationUserRole.STUDENT.name())
+                .anyRequest()
+                .authenticated()
+                .and()
+                .httpBasic();
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
