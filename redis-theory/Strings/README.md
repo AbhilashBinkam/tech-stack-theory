@@ -22,6 +22,7 @@ By using REDIS as a cache, the subsequent responses that might have taken severa
 can check the remaining TTL for a key using TTL command.
 
 > redis-enterprise:6379> TTL usage:63
+
 (integer) 7052
 
 REDIS String in regards to integer manipulation:
@@ -31,23 +32,35 @@ REDIS String in regards to integer manipulation:
 Let's run the INCR command with the key that doesn't exists yet.
 
 > redis-enterprise:6379> EXISTS user:23:visit-count
+
 (integer) 0
+
 > redis-enterprise:6379> INCR user:23:visit-count
+
 (integer) 1
 
 --> DECRBY
 
 > redis-enterprise:6379> set inventory:4x100m-womens-final 1000
+
 OK
+
 > redis-enterprise:6379> get inventory:4x100m-womens-final
+
 "1000"
+
 > redis-enterprise:6379> decrby inventory:4x100m-womens-final 1
+
 (integer) 999
 
 we can use TYPE command to get the datatype of a key
+
 > redis-enterprise:6379> type inventory:4x100m-womens-final
+
 string
+
 > redis-enterprise:6379> object encoding inventory:4x100m-womens-final
+
 "int"
 
 How does REDIS decrement the string value stored?
@@ -59,8 +72,13 @@ Since the numeric operation was performed on a numeric value, a numeric value is
 The contents of the String can be changed between text, number or binary at any point. To Redis it's always string datatype. REDIS supports polymorphism that is the ability to represent different types of data overtime for the same key. with the below commands we are updating the value from 999 to "Sold Out" and decrby on the key gets an error.
 
 > redis-enterprise:6379> set inventory:4x100m-womens-final "Sold Out"
+
 OK
+
 > redis-enterprise:6379> object encoding inventory:4x100m-womens-final
+
 "embstr" --> (represnets text value)
+
 > redis-enterprise:6379> decrby inventory:4x100m-womens-final
+
 (error) ERR value is not an integer orr out of range 
