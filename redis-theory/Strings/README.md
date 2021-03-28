@@ -15,6 +15,7 @@ OK
 Imagine, we want to provide users with the site usage data. Normally, we send the requst to DataWareHouse, which might take several seconds to complete. BY using STRING we can cache the JSON Response after initital fetch as these responses don't change often.
 
 > redis-enterprise:6379> SET usage:63 '{"balance":699.99, "currency":"USD","lastLogin":1281291212,"maxUsers":10}' EX 7200
+
 OK (7200 seconds == 2 hrs)
 
 By using REDIS as a cache, the subsequent responses that might have taken several seconds to fetch from the datawarehouse will instead be served instantly. 
