@@ -96,7 +96,7 @@ EXISTS Key [key ...]
 
 IMPORTANT: Having a two operations - the EXISTS followed by a SET -- means two round trips REDIS and possible inconsistencies. Another connection may have set a value or removed the key in between those commands.
 
-SET key value [EX seconds [PX milliseconds] [NX|XX] --> NX to make sure the key doesn't exists before we set it
+SET key value [EX seconds] [PX milliseconds] [NX|XX] --> NX to make sure the key doesn't exists before we set it
 													--> XX indiates that the key must exists before we apply the value 
 > redis-enterprise:6379> set inventory:100-meters-womens-final 1000 NX
 OK
@@ -105,6 +105,60 @@ OK
 > redis-enterprise:6379> set inventory:100-meters-womens-final 0 XX
 OK
 > redis-enterprise:6379> get inventory:100-meters-womens-final
+
+EXPIRATION OF KEYS:
+
+--> we can define an expiration time or TTL. REDIS will keep the key in memory until space is required or is forced out by the eviction policy in force.
+--> Expiration time can be set in milliseconds, seconds or UNIX timestamp. TTL can be set when the key is first created or can be set afterwards.
+--> Expiration time for a key can be removed
+
+TTL COMMANDS
+
+SET:
+> EXPIRE key seconds
+> EXPIREAT key timestamp
+> PEXPIRE key milliseconds
+> PEXPIREAT key milliseconds-timestamp
+
+EXAMINE:
+> TTL key
+> PTTL key
+
+REMOVE:
+> PERSIST key
+
+> redis-enterprise:6379> set seat-hold Row:A:Seat:4 PX 50000
+OK
+> redis-enterprise:6379> set seat-hold Row:A:Seat:4 EX 50
+OK
+
+Both the above examples result in setting the same value and the same time to live, although their actual expiration will depend on the clock time when the command was executed. Because the key has not expired, when we get the key the value is returned.
+
+> redis-enterprise:6379> get seat-hold
+"Row:A:Seat:4"
+
+
+If the key already exists or you want to expiration
+> redis-enterprise:6379> pexpire seat-hold 1
+(integer) 1
+> redis-enterprise:6379>get seat-hold
+(nil)
+
+Once an expiration is set, it can be examined. 
+
+> redis-enterprise:6379> set seat-hold Row:A:Seat:4 EX 50
+OK
+> redis-enterprise:6379> ttl seat-hold
+(integer) 42 --> amount of time left in seconds
+
+> redis-enterprise:6379> pttl seat-hold
+(integer) 42 --> amount of time left in milliseconds
+
+> redis-enterprise:6379> persist seat-hold --> we can remove the TTL on the key to ensure the key is retained
+(integer) 1
+
+https://redis.io/commands#
+
 
 
 
