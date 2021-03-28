@@ -30,16 +30,22 @@ For the above identical keys the server will do a binary comparison on the key n
 
 REDIS COMMANDS:
 
-> SET key value [EX seconds] [PX milliseconds] [NX|XX
+> SET key value [EX seconds] [PX milliseconds] [NX|XX]
+
 > GET key
 
 Example:
 
 > redis-enterprise:6379> set customer:1000 fred
+
 OK
+
 > redis-enterprise:6379> get customer:1000
+
 "fred"
+
 > redis-enterprise:6379> keys customer:1*
+
 1) "customer:1000"
 
 
@@ -59,18 +65,22 @@ SCAN slot [MATCH pattern] [COUNT count]
 To Execut the SCAN command we start by giving the slot position as "0"
 
 > redis-enterprise:6379> scan 0 MATCH customer:1*
+
 1) "14336"
 2) (empty list or set)
 
 > redis-enterprise:6379> scan 14336 MATCH customer:1*
+
 1) "14848"
 2) (empty list or set)
 
 > redis-enterprise:6379> scan 14336 MATCH customer:1* COUNT 1000
+
 1) "1229"
 2) 1) "customer:1500"
 
 > redis-enterprise:6379> scan 1229 MATCH customer:1* COUNT 1000
+
 1) "0"
 2) (empty list or set)
 
@@ -80,11 +90,15 @@ scan may take many calls, but ultimately we get the same results we got when run
 Remove keys:
 
 > DEL key [key ...] --> It removes the key and the memory associated with the key. This is a blocking operation.
+
 > UNLINK key [key ...] --> Non blocking operation and the memory associated with the key value is reclaimed by an async process
 
 > redis-enterprise:6379> unlink customer:1000
+
 (integer) 1  --> 1 indicates the number of keys got removed
+
 > redis-enterprise:6379> get customer:1000
+
 (nil)
 
 EXISTS keys:
@@ -92,6 +106,7 @@ EXISTS keys:
 EXISTS Key [key ...]
 
 > redis-enterprise:6379> exists inventory:100-meters-womens-final
+
 (integer) 0 --> returns 0 if no key found and returns 1 if key exists
 
 IMPORTANT: Having a two operations - the EXISTS followed by a SET -- means two round trips REDIS and possible inconsistencies. Another connection may have set a value or removed the key in between those commands.
@@ -99,11 +114,17 @@ IMPORTANT: Having a two operations - the EXISTS followed by a SET -- means two r
 SET key value [EX seconds] [PX milliseconds] [NX|XX] --> NX to make sure the key doesn't exists before we set it
 													--> XX indiates that the key must exists before we apply the value 
 > redis-enterprise:6379> set inventory:100-meters-womens-final 1000 NX
+
 OK
+
 > redis-enterprise:6379> set inventory:100-meters-womens-final "Sold Out" NX
+
 (nil) --> Since the key already exists then the value is left unchanged upon 1000  
+
 > redis-enterprise:6379> set inventory:100-meters-womens-final 0 XX
+
 OK
+
 > redis-enterprise:6379> get inventory:100-meters-womens-final
 
 EXPIRATION OF KEYS:
@@ -116,45 +137,62 @@ TTL COMMANDS
 
 SET:
 > EXPIRE key seconds
+
 > EXPIREAT key timestamp
+
 > PEXPIRE key milliseconds
+
 > PEXPIREAT key milliseconds-timestamp
 
 EXAMINE:
 > TTL key
+
 > PTTL key
 
 REMOVE:
 > PERSIST key
 
 > redis-enterprise:6379> set seat-hold Row:A:Seat:4 PX 50000
+
 OK
+
 > redis-enterprise:6379> set seat-hold Row:A:Seat:4 EX 50
+
 OK
 
 Both the above examples result in setting the same value and the same time to live, although their actual expiration will depend on the clock time when the command was executed. Because the key has not expired, when we get the key the value is returned.
 
 > redis-enterprise:6379> get seat-hold
+
 "Row:A:Seat:4"
 
 
 If the key already exists or you want to expiration
+
 > redis-enterprise:6379> pexpire seat-hold 1
+
 (integer) 1
+
 > redis-enterprise:6379>get seat-hold
+
 (nil)
 
 Once an expiration is set, it can be examined. 
 
 > redis-enterprise:6379> set seat-hold Row:A:Seat:4 EX 50
+
 OK
+
 > redis-enterprise:6379> ttl seat-hold
+
 (integer) 42 --> amount of time left in seconds
 
 > redis-enterprise:6379> pttl seat-hold
+
 (integer) 42 --> amount of time left in milliseconds
 
 > redis-enterprise:6379> persist seat-hold --> we can remove the TTL on the key to ensure the key is retained
+
 (integer) 1
 
 https://redis.io/commands#
