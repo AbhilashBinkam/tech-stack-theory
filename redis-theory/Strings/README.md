@@ -8,8 +8,11 @@ REDIS String:
 --> Increment and Decrement an integer value within a String
 
 > redis-enterprise:6379> SET user:101:time-zone UTC-8
+
 OK
+
 > redis-enterprise:6379> GET user:101:time-zone
+
 "UTC-8"
 
 Imagine, we want to provide users with the site usage data. Normally, we send the requst to DataWareHouse, which might take several seconds to complete. BY using STRING we can cache the JSON Response after initital fetch as these responses don't change often.
