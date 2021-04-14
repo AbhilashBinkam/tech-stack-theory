@@ -1,15 +1,15 @@
-REDIS Keys:
+**REDIS Keys:**
 
 Key names are unique
 Key names are Binary safe, which means any binary sequence can be used as a key. (Ex: "Foo",42.231234, 0xff). Long keys are generally not recommended
 Key names can be upto 512MB in size and can be increased in future versions of redis
 
-Key Spaces:
+**Key Spaces:**
 
 A single flat keyspace exists in logical database which means all the key names occupy the same space.
 No Automaitc separation of keys names into named groups such as buckets or collections.
 
-Logical Database:
+**Logical Database:**
 
 A logical-database is identified by a zero-based index. The default is Database 0.
 within a logical database the keynames are unique, but the same key names can appear in multiple logical databases. Hence logical databases do provide separation of key names. In practical terms, logical databases are best suited when you need seperate key spaces for a single application rathern than separating multiple applications.
@@ -28,7 +28,7 @@ Structured Key Name: development team can choose the structure of the key names.
 
 For the above identical keys the server will do a binary comparison on the key name to determine if the key exists before it's retrieved or modified.
 
-REDIS COMMANDS:
+**REDIS COMMANDS:**
 
 > SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
@@ -51,11 +51,11 @@ OK
 
 Two commands for getting a list of existing key names in our Redis database.
 
-> KEYS  --> Blocks until complete
+> **KEYS**  --> Blocks until complete
 		--> Never used in production
 		--> Userful for debugging
 
-> SCAN  --> Iteretes using a cursor
+> **SCAN**  --> Iteretes using a cursor
 		--> Returns a slot reference
 		--> May return 0 or more keys per call
 
@@ -87,7 +87,7 @@ To Execut the SCAN command we start by giving the slot position as "0"
 scan may take many calls, but ultimately we get the same results we got when running the KEYS command. To force SCAN to look at more keys per call, we can pass COUNT
 
 
-Remove keys:
+**Remove keys:**
 
 > DEL key [key ...] --> It removes the key and the memory associated with the key. This is a blocking operation.
 
@@ -101,7 +101,7 @@ Remove keys:
 
 (nil)
 
-EXISTS keys:
+**EXISTS keys:**
 
 EXISTS Key [key ...]
 
@@ -127,15 +127,15 @@ OK
 
 > redis-enterprise:6379> get inventory:100-meters-womens-final
 
-EXPIRATION OF KEYS:
+**EXPIRATION OF KEYS:**
 
 --> we can define an expiration time or TTL. REDIS will keep the key in memory until space is required or is forced out by the eviction policy in force.
 --> Expiration time can be set in milliseconds, seconds or UNIX timestamp. TTL can be set when the key is first created or can be set afterwards.
 --> Expiration time for a key can be removed
 
-TTL COMMANDS
+**TTL COMMANDS**
 
-SET:
+**SET:**
 > EXPIRE key seconds
 
 > EXPIREAT key timestamp
@@ -144,12 +144,12 @@ SET:
 
 > PEXPIREAT key milliseconds-timestamp
 
-EXAMINE:
+**EXAMINE:**
 > TTL key
 
 > PTTL key
 
-REMOVE:
+**REMOVE:**
 > PERSIST key
 
 > redis-enterprise:6379> set seat-hold Row:A:Seat:4 PX 50000
