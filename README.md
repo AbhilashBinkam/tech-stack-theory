@@ -82,9 +82,9 @@ T2 we can fetch the key that we wanted to fetch
 
 From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
 
-[![Product Name Screen Shot][cluster-slot-1]]
-[![Product Name Screen Shot][cluster-slot-2]]
-[![Product Name Screen Shot][cluster-slot-3]]
+[![Cluster Slot One][cluster-slot-1]]
+[![Cluster Slot Two][cluster-slot-2]]
+[![Cluster Slot Three][cluster-slot-3]]
 
 
 For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
@@ -102,6 +102,6 @@ we can store the cluster slot in local APC Cache on the webApplication server. T
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
 
 
-[cluster-slot-1]: blob/REDIS-cluster-slots-1.png
-[cluster-slot-2]: blob/REDIS-cluster-slots-2.png
-[cluster-slot-3]: blob/REDIS-cluster-slots-3.png
+[cluster-slot-1]: blob/REDIS-cluster-slots-1.PNG
+[cluster-slot-2]: blob/REDIS-cluster-slots-2.PNG
+[cluster-slot-3]: blob/REDIS-cluster-slots-3.PNG
