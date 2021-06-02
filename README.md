@@ -29,6 +29,7 @@ Challenge: Latency (How to debug in REDIS)
 Latency Doctor
 
 > latency doctor
+
 Latency monitoring is disabled in this Redis instance. 
 You may use "CONFIG SET latency-monitor-threshold <milliseconds>." in order to enable it. 
 If we weren't in a deep space mission I'd suggest to take a look at http://redis.io/topics/latency-monitor.
@@ -36,27 +37,36 @@ If we weren't in a deep space mission I'd suggest to take a look at http://redis
 Intrinsic Latency Checker
 
 > redis-cli --intrinsic-latency 100
+
 redis cli has intrinsic latency cheker built-in.
 when we run the above command it gives us the list of details that shows us how much intrinsic latency in our env (KERNEL)
 
 Client-Side Latency Checker
 
 > redis-cli --latency -h [hostname_redacted] -p 6328
+
 Defines network latency stats
 
 Slow Query Log
+
 > CONFIG SET slowlog-log-slower-than 10000
+
 set the config to get the queries that are taking more than 10ms.
+
 > CONFIG GET slowlog-log-slower-than
 
 
 PSYNC and CLUSTER SLOTS
+
 Slow Query Log
+
 > SLOWLOG GET
+
 get the list of queries that are taking more than 10ms which is configured in the above step.
 above query displayed the below results
 
 > SLOWLOG GET
+---
 	3) (integer) 15596 (15.6ms)
 	4) 1) "PSYNC"
 	   2) "?"
@@ -74,17 +84,16 @@ PSYNC is an internal command that is used when REDIS replias are subscribing to 
 when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic 
 and maintained by the cluster itself.
 
-T0 Seed Nodes: A, B --> client will ask the cluster for cluster slots
-T1 Slots: {A:0-5500, B: 5501-11000} --> Cluster responds with each nodes having the slots range (refer 3rd Image)
-T2 we can fetch the key that we wanted to fetch 
-	--> Lets say the HASH_SLOT = CRC16("mykey") mod 16384
-	    HASH_SLOT = 14687
+* T0 Seed Nodes: A, B --> client will ask the cluster for cluster slots
+* T1 Slots: {A:0-5500, B:5501-11000} --> Cluster responds with each nodes having the slots range (refer 3rd Image)
+* T2 we can fetch the key that we wanted to fetch 
+	--> Lets say the HASH_SLOT = CRC16("mykey") mod 16384 HASH_SLOT = 14687
 
-From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
+From the hashslot we can see that the range falls in C category (11001-16383)
 
-[![Cluster Slot One][cluster-slot-1]]
-[![Cluster Slot Two][cluster-slot-2]]
-[![Cluster Slot Three][cluster-slot-3]]
+[cluster-slot-1]
+[cluster-slot-2]
+[cluster-slot-3]
 
 
 For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
@@ -96,7 +105,7 @@ Ideally at the beginning of the start up we've to do one cluster slots for reque
 so we need to account for that change, if there is a moved response we've to refresh our cluser slots (in case of node failure and so on).
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge-solution.PNG?raw=true
 
-Solution: 
+## Solution: 
 
 we can store the cluster slot in local APC Cache on the webApplication server. This can reduce the latency 
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
