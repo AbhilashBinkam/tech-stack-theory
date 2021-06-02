@@ -1,5 +1,12 @@
 # Tech-stack
 
+What is Redis Cluster?
+
+Horizontally Scalable --> a way to have redis instances to form a cluster. Horizontally scalable means adding nodes to serve the capacity
+Auto Data Sharding --> Redis cluster is able to partition and split data among nodes in an automatic way 
+Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
+Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
+
 1. How to achieve Persistance in Redis Cluster? 
 
 1.a. redis_cluster.conf
