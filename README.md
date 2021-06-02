@@ -1,13 +1,13 @@
 # Tech-stack
 
-What is Redis Cluster?
+## What is Redis Cluster?
 
-Horizontally Scalable --> a way to have redis instances to form a cluster. Horizontally scalable means adding nodes to serve the capacity
-Auto Data Sharding --> Redis cluster is able to partition and split data among nodes in an automatic way 
-Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
-Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
+1. Horizontally Scalable --> a way to have redis instances to form a cluster. Horizontally scalable means adding nodes to serve the capacity
+2. Auto Data Sharding --> Redis cluster is able to partition and split data among nodes in an automatic way 
+3. Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
+4. Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
 
-1. How to achieve Persistance in Redis Cluster? 
+## How to achieve Persistance in Redis Cluster? 
 
 1.a. redis_cluster.conf
 > appendonly yes - AOF(Append Only File) is written everytime a user sends a command to REDIS Cluster
@@ -22,7 +22,7 @@ use the above 2 commands combination to persist the data in REDIS.
 NOTE: when we do RDB save, the redis instance(node) must fork and this can have performance degradation for client. Hence we do RBD saves only on replicas and with CRON expressions. 
 we don't interrupt the master which is taking client requests.
 
-2. REDIS Cluster for Sessions
+## REDIS Cluster for Sessions
 Challenge: Latency (How to debug in REDIS)
 
 Latency Doctor
@@ -60,15 +60,16 @@ above query displayed the below results
 	4) 1) "PSYNC"
 	   2) "?"
 	   3) "-1"
-...
+---
 	3) (integer) 38833 (38.8ms)
 	4) 1) "CLUSTER"
 	   2) "SLOTS"
 	   
-what is PSYNC? it is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
+## what is PSYNC? 
+It is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
 
-------------------------------------------------
-what is CLUSTER SLOTS?
+
+## what is CLUSTER SLOTS?
 when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic 
 and maintained by the cluster itself.
 
