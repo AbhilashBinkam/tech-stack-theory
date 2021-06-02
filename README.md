@@ -2,23 +2,24 @@
 
 ## What is Redis Cluster?
 
-1. Horizontally Scalable --> a way to have redis instances to form a cluster. Horizontally scalable means adding nodes to serve the capacity
-2. Auto Data Sharding --> Redis cluster is able to partition and split data among nodes in an automatic way 
-3. Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
-4. Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
+* Horizontally Scalable --> a way to have redis instances to form a cluster. Horizontally scalable means adding nodes to serve the capacity
+* Auto Data Sharding --> Redis cluster is able to partition and split data among nodes in an automatic way 
+* Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
+* Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
 
 ## How to achieve Persistance in Redis Cluster? 
 
-1.a. redis_cluster.conf
+1. redis_cluster.conf
 > appendonly yes - AOF(Append Only File) is written everytime a user sends a command to REDIS Cluster
 > appendfsync no - fulshes the AOF file to disk 
 	always -- for every single write to cluster the file is flushed to disk immediately
 	every second -- once a second the file is flushed to disk
 	no -- which allows the OS to use the default flushing option (30 sec)
 
-use the above 2 commands combination to persist the data in REDIS.
+use the above two commands combination to persist the data in REDIS.
 
-2.a. RDB file - snapshot i.e very consice and very efficiently stored and is useful for backup purposes.
+2. RDB file - snapshot i.e very consice and very efficiently stored and is useful for backup purposes.
+
 NOTE: when we do RDB save, the redis instance(node) must fork and this can have performance degradation for client. Hence we do RBD saves only on replicas and with CRON expressions. 
 we don't interrupt the master which is taking client requests.
 
@@ -66,7 +67,7 @@ above query displayed the below results
 	   2) "SLOTS"
 	   
 ## what is PSYNC? 
-It is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
+PSYNC is an internal command that is used when REDIS replias are subscribing to a master. but the PSYNC operation doesn't happen that often.
 
 
 ## what is CLUSTER SLOTS?
@@ -81,16 +82,15 @@ T2 we can fetch the key that we wanted to fetch
 
 From the hashslot we can see that the range falls in C category (11001-16383) refer Image 3
 
-https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-1.PNG?raw=true
-https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-2.PNG?raw=true
-https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-3.PNG?raw=true
+[![Product Name Screen Shot][cluster-slot-1]]
+[![Product Name Screen Shot][cluster-slot-2]]
+[![Product Name Screen Shot][cluster-slot-3]]
 
--------------------------------------------------
 
 For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
 The latency is request processing can occur when the client is not able to user the cluster slots config that was previously fetched.
 
-Problem Statement:
+## Problem Statement:
 
 Ideally at the beginning of the start up we've to do one cluster slots for request and then remember the result, but the cluster can reconfigure itself at anytime. 
 so we need to account for that change, if there is a moved response we've to refresh our cluser slots (in case of node failure and so on).
@@ -101,3 +101,7 @@ Solution:
 we can store the cluster slot in local APC Cache on the webApplication server. This can reduce the latency 
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
 
+
+[cluster-slot-1]: blob/REDIS-cluster-slots-1.png
+[cluster-slot-2]: blob/REDIS-cluster-slots-2.png
+[cluster-slot-3]: blob/REDIS-cluster-slots-3.png
