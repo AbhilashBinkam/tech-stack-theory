@@ -7,21 +7,53 @@
 * Fault tolerant --> we loose a node or the server went down but we can still continue operating as not data will be lost. High Availability
 * Decentralized cluster management (Gossip Protocol) --> Redis cluster uses gossip protocol amongst nodes to communicate on what the configuration of the cluster is all about. we can also send any command to any cluster node inorder to change the cluster. There is no single node which can acts like an orchestrator in Redis cluster, every node participates. 
 
-## How to achieve Persistance in Redis Cluster? 
+## Data Sharding in Redis Cluster
+
+* Every key that we store into Redis Cluster is associated with hashslot. There are 0 ~ 16383 hashslots. Let's assume that these hasslots are divided into 3 parts and allocated to 3 master nodes. Each master nodes have 2 replicas configured as shown in the image. If the master goes down then the replica will take the place of master
+
+![data sharing redis][data-sharing-redis]
+
+## How to achieve Persistance in Redis Cluster?
+
+Below are the two ways to achieve persistence in Redis Cluster
+
+AOF(Append Only File) is written everytime a user sends a command/write command to REDIS Cluster
+appendfsync - fulshes the AOF file to disk
 
 1. redis_cluster.conf
-> appendonly yes - AOF(Append Only File) is written everytime a user sends a command to REDIS Cluster
-> appendfsync no - fulshes the AOF file to disk 
-	always -- for every single write to cluster the file is flushed to disk immediately
-	every second -- once a second the file is flushed to disk
-	no -- which allows the OS to use the default flushing option (30 sec)
+
+> appendonly yes 
+> appendfsync no
 
 use the above two commands combination to persist the data in REDIS.
+Other available options for appendfsync
+
+> appendfsync always
+
+for every single write to cluster the file is flushed to disk immediately
+
+> appendfsync every second
+
+once a second the file is flushed to disk
+
+> appendfsync no
+
+which allows the OS to use the default flushing option (30 sec)
+
 
 2. RDB file - snapshot i.e very consice and very efficiently stored and is useful for backup purposes.
 
 NOTE: when we do RDB save, the redis instance(node) must fork and this can have performance degradation for client. Hence we do RBD saves only on replicas and with CRON expressions. 
 we don't interrupt the master which is taking client requests.
+
+## Sample real-time implementation of redis-cluster specifications
+
+* 32 masters, 64 slaves
+* 25 GB per instance
+* 8 instances per host
+* 12,000 total RPS
+
+## REDIS is single threaded and we get more value for money if we co-locate instances on a single host
 
 ## REDIS Cluster for Sessions
 Challenge: Latency (How to debug in REDIS)
@@ -43,15 +75,15 @@ when we run the above command it gives us the list of details that shows us how 
 
 Client-Side Latency Checker
 
-> redis-cli --latency -h [hostname_redacted] -p 6328
+> redis-cli --latency -h [hostname_redacted] -p 6382
 
 Defines network latency stats
 
-Slow Query Log
+Slow Query Log -- This can be configured to record the events takes palce in redis which can take longer than certain amount of time. 
 
 > CONFIG SET slowlog-log-slower-than 10000
 
-set the config to get the queries that are taking more than 10ms.
+The above command sets the config to get the queries that are taking more than 10ms.
 
 > CONFIG GET slowlog-log-slower-than
 
@@ -84,10 +116,9 @@ PSYNC is an internal command that is used when REDIS replias are subscribing to 
 when a web Appication is making a requst to redis cluster, firstly the client has to understand what the configuration of the cluster is, since cluster config is dynamic 
 and maintained by the cluster itself.
 
-* T0 Seed Nodes: A, B --> client will ask the cluster for cluster slots
-* T1 Slots: {A:0-5500, B:5501-11000} --> Cluster responds with each nodes having the slots range (refer 3rd Image)
-* T2 we can fetch the key that we wanted to fetch 
-	--> Lets say the HASH_SLOT = CRC16("mykey") mod 16384 HASH_SLOT = 14687
+* At time T0 --> client will ask the cluster for cluster slots --> Seed Nodes: A, B and C
+* At time T1 --> Before we make a request to the cluster the client has to update it's understanding on what the cluster config is, since cluster config is dynamic and maintained by the cluster so we've to ask the cluster for cluster slots --> In response we get the slots range  --> Slots: {A:0-5500, B:5501-11000} --> Cluster responds with each nodes having the slots range
+* At time T2 --> we can fetch the key that we wanted to fetch --> Lets say the HASH_SLOT = CRC16("mykey") mod 16384 HASH_SLOT = 14687
 
 From the hashslot we can see that the range falls in C category (11001-16383)
 
@@ -96,7 +127,7 @@ From the hashslot we can see that the range falls in C category (11001-16383)
 ![Cluster slot three][cluster-slot-3]
 
 
-For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
+For every user request from client, the cluster slots get triggered first and then followed by the retireval of the key that we wanted. This process can happen thousands of times per second. 
 The latency is request processing can occur when the client is not able to user the cluster slots config that was previously fetched.
 
 ## Problem Statement:
@@ -115,3 +146,4 @@ we can store the cluster slot in local APC Cache on the webApplication server. T
 [cluster-slot-3]: redis-theory/blob/REDIS-cluster-slots-3.PNG
 [Cluster-slot-challenge-one]: redis-theory/blob/REDIS-cluster-slots-challenge-solution.PNG
 [Cluster-slot-challenge-two]: redis-theory/blob/REDIS-cluster-slots-challenge.PNG
+[data-sharing-redis]: redis-theory/blob/data-sharding-redis.PNG
