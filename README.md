@@ -91,9 +91,9 @@ and maintained by the cluster itself.
 
 From the hashslot we can see that the range falls in C category (11001-16383)
 
-[cluster-slot-1]
-[cluster-slot-2]
-[cluster-slot-3]
+![Cluster slot One][cluster-slot-1]
+![Cluster slot two][cluster-slot-2]
+![Cluster slot three][cluster-slot-3]
 
 
 For every user request from client the cluster slots get triggered first followed by the retireval of the key that we wanted. this can happen thousands of times per second. 
@@ -103,14 +103,15 @@ The latency is request processing can occur when the client is not able to user 
 
 Ideally at the beginning of the start up we've to do one cluster slots for request and then remember the result, but the cluster can reconfigure itself at anytime. 
 so we need to account for that change, if there is a moved response we've to refresh our cluser slots (in case of node failure and so on).
-https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge-solution.PNG?raw=true
+![Cluster slot challenge one][cluster-slot-1]
 
 ## Solution: 
 
-we can store the cluster slot in local APC Cache on the webApplication server. This can reduce the latency 
-https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
-
+we can store the cluster slot in local APC Cache on the webApplication server. This can reduce the latency
+![Cluster slot challenge two][cluster-slot-1]
 
 [cluster-slot-1]: redis-theory/blob/REDIS-cluster-slots-1.PNG
 [cluster-slot-2]: redis-theory/blob/REDIS-cluster-slots-2.PNG
 [cluster-slot-3]: redis-theory/blob/REDIS-cluster-slots-3.PNG
+[Cluster-slot-challenge-one]: redis-theory/blob/REDIS-cluster-slots-challenge-solution.PNG
+[Cluster-slot-challenge-two]: redis-theory/blob/REDIS-cluster-slots-challenge.PNG
