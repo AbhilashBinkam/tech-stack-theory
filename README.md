@@ -102,6 +102,6 @@ we can store the cluster slot in local APC Cache on the webApplication server. T
 https://github.com/AbhilashBinkam/Tech-stack/blob/main/blob/REDIS-cluster-slots-challenge.PNG?raw=true
 
 
-[cluster-slot-1]: blob/REDIS-cluster-slots-1.PNG
-[cluster-slot-2]: blob/REDIS-cluster-slots-2.PNG
-[cluster-slot-3]: blob/REDIS-cluster-slots-3.PNG
+[cluster-slot-1]: redis-theory/blob/REDIS-cluster-slots-1.PNG
+[cluster-slot-2]: redis-theory/blob/REDIS-cluster-slots-2.PNG
+[cluster-slot-3]: redis-theory/blob/REDIS-cluster-slots-3.PNG
